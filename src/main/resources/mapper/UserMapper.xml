@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yangyl.dao.UserMapper" >
+
+	<insert id="createUser" parameterType="com.yangyl.domain.User">
+		insert into sys_users(username, password, salt, locked) 
+		values(#{username},#{password},#{salt}, #{locked})
+	</insert>
+	
+	<update id="updateUser" parameterType="com.yangyl.domain.User">
+		update sys_users 
+		set username=#{username}, password=#{password}, salt=#{salt}, locked=#{locked} 
+		where id=#{id}
+	</update>
+	
+	<delete id="deleteUser" parameterType="Integer">
+		delete from sys_users where id=#{id}
+	</delete>
+	
+	<insert id="correlationRoles" parameterType="Integer">
+		insert into sys_users_roles(user_id, role_id) values(#{userId},#{roleId})
+	</insert>
+	
+	<delete id="uncorrelationRoles" parameterType="Integer">
+		delete from sys_users_roles where user_id=#{userId} and role_id=#{roleId}
+	</delete>
+	
+	<select id="findOne" parameterType="Integer" resultType="com.yangyl.domain.User">
+		select id, username, password, salt, locked from sys_users where id=#{userId}
+	</select>
+	
+	<select id="findByUsername" parameterType="String" resultType="com.yangyl.domain.User">
+		select id, username, password, salt, locked from sys_users where username=#{username}
+	</select>
+	
+	<select id="findRoles" parameterType="String" resultType="String">
+		select role from sys_users u, sys_roles r,sys_users_roles ur where u.username=#{username} and u.id=ur.user_id and r.id=ur.role_id
+	</select>
+	
+	<select id="findPermissions" parameterType="String" resultType="String">
+		select permission from sys_users u, sys_roles r, sys_permissions p, sys_users_roles ur, sys_roles_permissions rp where u.username=#{username} and u.id=ur.user_id and r.id=ur.role_id and r.id=rp.role_id and p.id=rp.permission_id
+	</select>
+	
+	<select id="select" parameterType="map" resultType="com.yangyl.domain.User">
+		select * from sys_users
+		<where>
+			<if test="username != null">
+				and username like '%${username}%'
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectUserById" parameterType="Integer" resultType="com.yangyl.domain.User">
+		select * from sys_users where id=#{id}
+	</select>
+</mapper>

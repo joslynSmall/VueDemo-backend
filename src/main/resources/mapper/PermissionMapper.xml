@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yangyl.dao.PermissionMapper" >
+	<insert id="createPermission" parameterType="com.yangyl.domain.Permission" >
+		insert into sys_permissions(permission, description, available) 
+		values(#{permission},#{description},#{available})
+	</insert>
+	
+	<delete id="deletePermission" parameterType="Integer">
+		delete from sys_permissions where id=#{permissionId}
+	</delete>
+	
+	<update id="updatePermission" parameterType="com.yangyl.domain.Permission">
+		update sys_permissions set permission=#{permission},description=#{description},
+		available=#{available} where id=#{id}
+	</update>
+	
+	<select id="listPermissions" resultType="com.yangyl.domain.Permission" parameterType="map">
+		select * from sys_permissions
+		<where>
+			<if test="permission != null">
+				and permission like '%${permission}%'
+			</if>
+		</where>
+	</select>
+	
+	<select id="listAllPermissions" resultType="com.yangyl.domain.Permission">
+		select * from sys_permissions
+	</select>
+	
+	<select id="selectPermissionById" parameterType="Integer" resultType="com.yangyl.domain.Permission">
+		select * from sys_permissions where id=#{id};
+	</select>
+	
+	<select id="listPermissionsByRoleId" parameterType="Integer" resultType="Integer">
+		select * from sys_permissions inner join sys_roles_permissions on sys_permissions.id = sys_roles_permissions.permission_id
+		where sys_roles_permissions.role_id = #{roleId}
+	</select>
+	
+	
+	
+</mapper>

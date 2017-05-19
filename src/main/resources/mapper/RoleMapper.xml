@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yangyl.dao.RoleMapper" >
+
+	<insert id="createRole" parameterType="com.yangyl.domain.Role">
+		insert into sys_roles(role, description, available) 
+		values(#{role},#{description},#{available})
+	</insert>
+	
+	<update id="updateRole" parameterType="com.yangyl.domain.Role">
+		update sys_roles set role=#{role},description=#{description},
+		available=#{available} where id=#{id}
+	</update>
+	
+	<select id="listRoles" resultType="com.yangyl.domain.Role" parameterType="map">
+		select * from sys_roles
+		<where>
+			<if test="role != null">
+				and role like '%${role}%'
+			</if>
+		</where>
+	</select>
+	
+	<select id="listAllRoles" resultType="com.yangyl.domain.Role">
+		select * from sys_roles
+	</select>
+	
+	<select id="selectRoleById" parameterType="Integer" resultType="com.yangyl.domain.Role">
+		select * from sys_roles where id=#{roleId};
+	</select>
+	
+	<delete id="deleteRole" parameterType="Integer">
+		delete from sys_roles where id=#{roleId}
+	</delete>
+	
+	<insert id="correlationPermissions" parameterType="Integer">
+		insert into sys_roles_permissions(role_id, permission_id) values(#{roleId},#{permissionId})
+	</insert>
+	
+	<delete id="uncorrelationPermissions" parameterType="Integer">
+		delete from sys_roles_permissions where role_id=#{roleId} and permission_id=#{permissionId}
+	</delete>
+	
+	<select id="listRolesByUserId" parameterType="Integer" resultType="Integer">
+		select sys_roles.id from sys_users_roles inner join sys_roles on sys_users_roles.role_id=sys_roles.id
+		where sys_users_roles.user_id=#{userId};
+	</select>
+</mapper>
